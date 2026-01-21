@@ -51,20 +51,22 @@ Maximize total squad score: max Σ score(player, role) × x(player,role)
 - Sub roles like (AM, CM, DM) for a midfield are considered
 #### Role Modelling:
 - Example role-style mapping:
-        'CF':PC_1
-        'AM': 0.5 * PC_1 + PC_2
-        'CM': PC_2
-        'DM': -PC_1- PC_2
-        'CB': -PC_1
-        'WM': PC_3
-        'FB': -0.5 * PC_1 + PC_3
-This could be changed upon new data
+       ``` CF:PC_1
+        AM: 0.5 * PC_1 + PC_2
+        CM: PC_2
+        DM: -PC_1- PC_2
+        CB: -PC_1
+        WM: PC_3
+        FB: -0.5 * PC_1 + PC_3```
+
 
 Currently implemented with the Portuguese Football squad, example usage
 ```
 from src.milp_solver import SquadMILPSolver
+player_scores = pd.read_csv('data/squad_roles_scores.csv').to_dict(orient='records')
+
 formation = (4,3,3)
-solver = SquadMILPSolver( player_info, players: # must be dict, with name,score : {'cm':0.4,'AM':0.3}, roles:['cm','AM'],
+solver = SquadMILPSolver( player_info= player_scores: # must be dict, with name,score : {'cm':0.4,'AM':0.3}, roles:['cm','AM'],
                             formation = formation, total_players =10, role_aware=True)
 results = solver.solve()
 
@@ -77,4 +79,5 @@ squad_selected = pd.DataFrame(results['selected_players'])
 - Single Objective optimization
 
 #### Tech Stack
-- Python, PULP  (MILP) , Numpy, Pandas, Scikit-Learn (PCA)
+- Python, PULP  (MILP), Numpy, Pandas, Scikit-Learn (PCA)
+
