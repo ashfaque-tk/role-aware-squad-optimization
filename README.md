@@ -15,11 +15,11 @@ Selecting an optimal football squad is a constrained optimization problem:
 - Player quality depends on **playing style**, not just raw stats
 
 Traditional approaches rely on heuristic scoring or manual selection.  
-This project formulates squad selection as a **mathematical optimization problem**, solved exactly using MILP.
+This project formulates squad selection as a **mathematical optimization problem**and solves it exactly using MILP.
 
 
 ## Methodology Overview
-
+## Removed from current version
 ### 1. Feature Engineering with PCA
 - Player performance metrics (from FBref-style data) are standardized
 - **Principal Component Analysis (PCA)** is applied to extract dominant playing styles
@@ -45,7 +45,7 @@ The squad selection problem is solved using **PuLP**:
 Maximize total squad score: max Σ score(player, role) × x(player,role)  
 
 #### Constraints
-- Total squad Size -- currently 10 (excluding GK)
+- Total squad Size --11 players
 - Formation Constraints (DF/MF/FW)
 - A player can be assigned at most **one role**
 - Sub roles like (AM, CM, DM) for a midfield are considered
@@ -74,10 +74,10 @@ squad_selected = pd.DataFrame(results['selected_players'])
 ```
 
 ### Limitations (V1):
-- Small player pool (only 22 Portugal squad members )
-- PCA trained on limited data
+
 - Single Objective optimization
 
 #### Tech Stack
-- Python, PULP  (MILP), Numpy, Pandas, Scikit-Learn (PCA)
+- Python, PULP  (MILP), Numpy, Pandas, Scikit-Learn (PCA), Streamlit
+
 
