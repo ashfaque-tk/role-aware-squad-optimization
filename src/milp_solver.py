@@ -12,7 +12,7 @@ class SquadMILPSolver:
     def __init__(
         self,
         player_info: List[Dict],
-        formation: Tuple[int, int, int],  # (DF, MF, FW)
+        formation: Tuple[int, int, int,int],  # (DF, MF, FW,GK)
         age : Tuple,#(min,max)
         total_budget: int,
         playing_style : str,
