@@ -86,10 +86,10 @@ def player_filtering_section():
     """Player selection interface"""
 
     st.session_state.optimization_run = False
-    st.subheader("➕ Add Player")  
+    st.subheader("➕ Chose your Favourite Player")  
     # Check if max players locked
     if len(st.session_state.locked_players) >= 3:
-        st.warning("⚠️ Maximum 3 players can be locked")
+        st.warning("⚠️ Maximum 3 players can be Chosen")
         return
     players_df = load_players()
     nationalities = sorted(players_df['Nationality'].unique()) 
@@ -119,14 +119,14 @@ def player_filtering_section():
             selected_role = st.selectbox("Playing Position", ['-- Select Position --'] + available_roles, key="role_select" )    
             if selected_role != '-- Select Position --':
                 # Lock button
-                if st.button("🔒 Lock Player", type="primary"):
+                if st.button("🔒 Chose Player", type="primary"):
                     st.session_state.locked_players[selected_player] = {
                         "role": selected_role,
                         "age": player_data['Age'],
                         "wage": player_data.get('WageEUR', 0)  # Store in EUR (not millions)
                     }
                     st.session_state.locked_roles.add(selected_role)
-                    st.success(f"✓ Locked {selected_player} as {selected_role}")
+                    st.success(f"✓ Chose {selected_player} as {selected_role}")
                     st.rerun()
 
 def render_results(budget, formation, style, age_range):
@@ -172,12 +172,12 @@ def render_results(budget, formation, style, age_range):
         # FIXED: Set explicit figure size for better control
         fig.set_size_inches(10, 7)  # Width, Height in inches  
         # Display with constrained width
-        st.pyplot(fig, use_container_width=False)  # Don't use full container width   
+        st.pyplot(fig, width='content')  # Don't use full container width   
         # Show team details in expandable section
         with st.expander("📋 View Full Squad Details"):
             st.dataframe(
                 pd.DataFrame(playing_team),
-                use_container_width=True,
+                width='stretch',
                 hide_index=True
             )
 
@@ -193,7 +193,7 @@ def render_layout():
         st.session_state.current_budget = budget
         # Optimize button at bottom of left column
         st.markdown("---")
-        if st.button("⚡ Optimize Team", type="primary", use_container_width=True):
+        if st.button("⚡ Optimize Team", type="primary", width='stretch'):
             st.session_state.optimization_run = True
             # Results will be rendered in the middle column below
 
