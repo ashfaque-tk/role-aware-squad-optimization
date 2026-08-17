@@ -1,0 +1,68 @@
+[
+    {
+        "Name": "L. Messi",
+        "role": "CAM",
+        "Rolescore": 91,
+        "WageEur": 195000
+    },
+    {
+        "Name": "K. Benzema",
+        "role": "CF",
+        "Rolescore": 89,
+        "WageEur": 450000
+    },
+    {
+        "Name": "R. Lewandowski",
+        "role": "ST",
+        "Rolescore": 91,
+        "WageEur": 420000
+    },
+    {
+        "Name": "K. De Bruyne",
+        "role": "CM",
+        "Rolescore": 91,
+        "WageEur": 350000
+    },
+    {
+        "Name": "K. Mbappé",
+        "role": "LW",
+        "Rolescore": 90,
+        "WageEur": 230000
+    },
+    {
+        "Name": "M. Neuer",
+        "role": "GK",
+        "Rolescore": 90,
+        "WageEur": 72000
+    },
+    {
+        "Name": "V. van Dijk",
+        "role": "CB",
+        "Rolescore": 90,
+        "WageEur": 230000
+    },
+    {
+        "Name": "Rúben Dias",
+        "role": "CB",
+        "Rolescore": 90,
+        "WageEur": 230000
+    },
+    {
+        "Name": "João Cancelo",
+        "role": "RB",
+        "Rolescore": 87,
+        "WageEur": 250000
+    },
+    {
+        "Name": "A. Robertson",
+        "role": "LB",
+        "Rolescore": 87,
+        "WageEur": 185000
+    },
+    {
+        "Name": "C. Nkunku",
+        "role": "CAM",
+        "Rolescore": 89,
+        "WageEur": 90000
+    }
+]

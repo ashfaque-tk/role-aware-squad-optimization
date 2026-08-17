@@ -1,0 +1,17 @@
+# Why This Squad Makes Sense
+
+Think of this like building a team with a fixed transfer budget. You need one player in every key position, and you want the best overall quality you can afford — but the best players usually cost the most, so you have to pick your battles.
+
+## The Big Splash: Messi
+Messi is by far the most expensive player here (195,000 in wages), but he's also the highest rated (91). The solver decided he was worth the splurge because a player of that quality lifts the whole team. Now, you'll notice he's listed at CAM, not his more famous RW spot. This isn't a mistake — it's a budget decision. The squad already needed a right winger, and Berardi filled that role for a fraction of the cost. Since Messi can comfortably play centrally as a playmaker, slotting him into CAM let the team get his rating and influence on the pitch while still filling the RW slot cheaply elsewhere. Essentially: get Messi's quality into the lineup, but don't pay a premium salary for a specialist winger role when someone cheaper (Berardi) does that job well enough.
+
+## Smart Spending Elsewhere
+Look at the defense: Süle and de Ligt are both very solid centre-backs (85 rating each) but relatively affordable compared to attacking stars. Grimaldo at left-back is a standout bargain — decent rating (82) for a very low wage (19,000). These picks show the classic "value for money" pattern: you don't need to overspend in every position, just the ones that matter most for the team's identity.
+
+## Balanced Spending in Midfield and Attack
+Kimmich and Barella give the midfield steel and quality without being as expensive as Messi. Lautaro Martínez up front and Gakpo on the left wing offer strong performance at moderate-to-low wages — Gakpo, in particular, is another bargain (83 rating for just 29,000).
+
+## The Overall Strategy
+Picture the budget as a pie. The solver spent a big slice on Messi because his impact is so high, then filled every remaining position with players who give the best "bang for your buck" — good enough quality without breaking the bank. Where a star was affordable (like Kimmich or de Ligt), they got one. Where cheaper options were nearly as effective (Grimaldo, Gakpo, Berardi), the system chose them instead of overspending.
+
+The result: every position on the pitch is covered, the overall team quality is high, and the wage bill is kept as low as possible while still being able to afford one true superstar in Messi — even if it meant shifting him to a slightly different role than fans might expect.

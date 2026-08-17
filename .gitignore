@@ -8,3 +8,4 @@ wheels/
 data/portugal_squad.db
 # Virtual environments
 .venv
+.env.env

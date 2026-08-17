@@ -53,7 +53,7 @@ def get_formation_coords(formation):
     
     return coords
 
-def assign_players_to_slots(players, formation):
+def assign_players_to_slots(players:list[dict], formation:tuple[int,int,int]):
   
     formation_slots = FORMATIONS_DICT[formation]
     assignments = [None] * len(formation_slots)
@@ -61,6 +61,7 @@ def assign_players_to_slots(players, formation):
     from collections import defaultdict
     role_to_players = defaultdict(list)
     for p in players:
+
         role_to_players[p['role']].append(p)
     
     used_players = set()
@@ -81,12 +82,13 @@ def assign_players_to_slots(players, formation):
     
     return assignments
 
-def plot_team(players, formation=(4,3,3)):
+def plot_team(players,ax=None, formation=(4,3,3)):
     """
     Args:
         players: List with {'Name': str, 'role': str}  
     """
-    fig, ax = plt.subplots(figsize=(3, 4))
+    if ax == None:
+        fig, ax = plt.subplots(figsize=(6, 7))
     
     pitch = mplsoccer.VerticalPitch(
         pitch_color='grass',
@@ -121,9 +123,10 @@ def plot_team(players, formation=(4,3,3)):
                    ha="center", va="top", 
                    fontsize=11, color='yellow')
     
-    plt.title(f"Formation: {formation[0]}-{formation[1]}-{formation[2]}", 
-             fontsize=11, color='white', weight='bold')
+    # plt.title(f"Formation: {formation[0]}-{formation[1]}-{formation[2]}", 
+            #  fontsize=11, color='white', weight='bold')
     plt.tight_layout()
+    # plt.close()
     return fig
 
 # Example usage

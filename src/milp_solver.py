@@ -12,7 +12,7 @@ class SquadMILPSolver:
     def __init__(
         self,
         player_info: List[Dict],
-        formation: Tuple[int, int, int],  # (DF, MF, FW)
+        formation: Tuple[int, int, int,int],  # (DF, MF, FW,GK)
         age : Tuple,#(min,max)
         total_budget: int,
         playing_style : str,
@@ -31,6 +31,9 @@ class SquadMILPSolver:
         self.x = {}
         self.style = playing_style
         self.locked_players = locked_players
+
+        print('locked players ', self.locked_players)
+
 
         # self.playting_styles = {''}
     def _get_formation_constraints(self,formation,style):
@@ -62,10 +65,25 @@ class SquadMILPSolver:
                             'RB':  (1, 1),
                             'LM' : (0,1),
                             'RM' :(0,1)  
+                            },
+                            ((4,3,3), 'balanced'): {
+                            'CAM': (0, 1),  # (min, max)
+                            'CM':  (1, 2),
+                            'CDM': (1, 1),
+                            'LW':  (0, 1),
+                            'RW':  (0, 1),
+                            'ST':  (1, 1),
+                            'CF': (0,1),
+                            'CB':  (2, 2),
+                            'LB':  (1, 1),
+                            'RB':  (1, 1),
+                            'LM' : (0,1),
+                            'RM' :(0,1)  
                             }
+
                             }      
 
-        style_weights = {'attack':[1,0.8,0.4],'defend':[0.6,0.7,1]}         
+        style_weights = {'attack':[1,0.8,0.4],'defend':[0.6,0.7,1],'balanced':[0.5,0.5,0.5]}         
 
         return formation_styles[(formation,style)],style_weights[style]                             
         
@@ -96,9 +114,23 @@ class SquadMILPSolver:
     def build_constraints(self):
         DF, MF, FW ,GK = self.formation
 
+        print(self.locked_players)
+
+        player_lookup = {p['Name']:  p for p in self.players}
+        
+    
         if self.locked_players:
             for key,values in self.locked_players.items():
-                self.model+=(self.x[(key,values['role'])])==1
+                if values['role'] is None:
+
+                    # first retrieve the data for the given player, player data is a list
+                    player_data = player_lookup[key]
+          
+                    self.model += pl.lpSum(self.x[(key,r)] for r in player_data['PossiblePositions']) == 1
+            
+                else:
+
+                    self.model+=(self.x[(key,values['role'])])==1
             # for name,role in self.locked_players.items():
             #     self.model+= ( self.x[(name,role)]) == 1
 
@@ -142,6 +174,7 @@ class SquadMILPSolver:
                         for r in p['PossiblePositions']:
                             self.model+= pl.lpSum(self.x[(p['Name'],r)]*p['Age'])>=self.avg_age[0]*pl.lpSum(self.x[(p['Name'],r)])
                             self.model+= pl.lpSum(self.x[(p['Name'],r)]*p['Age'])<=self.avg_age[1]*pl.lpSum(self.x[(p['Name'],r)])
+
                 # self.model += (pl.lpSum(self.x[(p['Name'],r)]*p['Age'] for p in self.players for r in p['PossiblePositions'] if p['Name'] not in self.locked_players.keys())) <= self.avg_age * pl.lpSum(self.x[(p['Name'], r)] 
                 # for p in self.players for r in p['PossiblePositions'] if p['Name'] not in self.locked_players.keys()  )
 
@@ -172,7 +205,8 @@ class SquadMILPSolver:
                 for (name, role), var in self.x.items():
                     if var.value() == 1:
                             selected.append({"Name": name,                
-                                "role": role
+                                "role": role,
+                        
                                 })
 
             # calculating the budget and average age of selected players
@@ -182,7 +216,8 @@ class SquadMILPSolver:
             for player_info in selected:  # Only 11 players
                 # Find the full player data
                 p = next(p for p in self.players if p['Name'] == player_info['Name'])
-                player_info['Rating'] = p['Overall']
+                player_info['Rolescore']  = p['rating_per_roles'][player_info['role']]
+                # player_info['Overall'] = p['Overall']
                 player_info['WageEur'] = p['WageEUR']
                 budget += p['WageEUR']
                 age += p['Age']
