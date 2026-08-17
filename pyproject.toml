@@ -4,4 +4,14 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "anthropic>=0.116.0",
+    "dotenv>=0.9.9",
+    "ipykernel>=7.3.0",
+    "mplsoccer>=1.6.1",
+    "pulp>=3.3.2",
+    "pymoo>=0.6.2",
+    "rapidfuzz>=3.14.5",
+    "streamlit>=1.59.2",
+    "unidecode>=1.4.0",
+]
