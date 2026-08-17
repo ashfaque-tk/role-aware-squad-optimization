@@ -49,7 +49,9 @@ tools = [{
     }
 }]
 
-def parse_nl_input(user_text):
+def parse_nl_input(user_text,client):
+    if not client:
+        raise ValueError("Anthropic client is not initialized")
     messages = [{"role": "user", "content": user_text}]
     response = client.messages.create(
         model='claude-sonnet-5',
@@ -68,4 +70,4 @@ def parse_nl_input(user_text):
 
 message = 'team with Neymar with min age of 32'
 
-print(parse_nl_input(message))
+# print(parse_nl_input(message))

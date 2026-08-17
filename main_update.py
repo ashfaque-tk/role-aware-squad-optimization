@@ -6,6 +6,7 @@ import pandas as pd
 from pathlib import Path
 from llm_input import *
 from src.search_players import find_player
+import anthropic
 
 BASE_DIR = Path(__file__).resolve().parents[0]
 
@@ -65,69 +66,6 @@ def render_inputs_modified(parsed=None):
 
     formation = formation_str_to_tuple(formation)
     return budget, formation, style, (min_age, max_age)
-
-
-# def resolve_and_lock_player(candidate_name: str, candidate_role: str, key_suffix: str, players_df: pd.DataFrame):
-#     """
-#     Resolve a name (manual search or LLM-extracted) to a dataset row, handle
-#     disambiguation when multiple matches exist, and render lock / edit / remove
-#     controls. Single source of truth for locking — replaces the old
-#     lock_player / choose_players / player_filtering_section trio.
-#     """
-#     matches = find_player(candidate_name, players_df)
-
-#     if not matches:
-#         st.warning(f"No player found matching '{candidate_name}'")
-#         return
-
-#     if len(matches) > 1:
-#         chosen = st.selectbox(
-#             f"Multiple matches for '{candidate_name}' — choose one",
-#             [' '] + matches,
-#             key=f"disambig_{key_suffix}"
-#         )
-#         if chosen == ' ':
-#             return
-#         matched_name = chosen
-#     else:
-#         matched_name = matches[0]
-
-#     player_data = players_df[players_df['Name'] == matched_name].iloc[0]
-#     available_positions = list(player_data['PossiblePositions'])
-
-#     # --- already locked: show status + edit/remove ---
-#     if matched_name in st.session_state.locked_players:
-#         # current_role = st.session_state.locked_players[matched_name]['role']
-#         current_role = candidate_role
-#         st.success(f"🔒 {matched_name} — role set: **{candidate_role}**")
-#         with st.expander("Edit"):
-#             new_role = st.selectbox(
-#                 "Change position", [None] + available_positions, key=f"edit_role_{matched_name}"
-#             )
-#             if st.button("Update role", key=f"update_{matched_name}"):
-#                 st.session_state.locked_players[matched_name]['role'] = None if new_role == 'None' else new_role
-#                 st.rerun()
-#             if st.button("Remove player", key=f"remove_{matched_name}"):
-#                 del st.session_state.locked_players[matched_name]
-#                 st.rerun()
-#         return
-
-#     # --- not yet locked: show details + lock control ---
-#     # NOTE: WageEUR is stored/displayed in millions already based on your data —
-#     # confirm this matches final_squad_cleaned.json; see flag below.
-#     st.info(f"**{matched_name}** — €{player_data.get('WageEUR', 0):.2f} | Age {player_data['Age']}")
-#     selected_role = st.selectbox(
-#         "Position (optional — leave as None to let the optimizer decide)",
-#         ['None'] + available_positions,
-#         key=f"role_select_{key_suffix}"
-#     )
-#     if st.button(f"🔒 Lock {matched_name}", key=f"lock_{key_suffix}"):
-#         st.session_state.locked_players[matched_name] = {
-#             "role": None if selected_role == 'None' else selected_role,
-#             "age": player_data['Age'],
-#             "wage": player_data.get('WageEUR', 0)
-#         }
-#         st.rerun()
 
 def resolve_and_lock_player(candidate_name: str, candidate_role, key_suffix: str,
                              players_df: pd.DataFrame, source: str = "manual"):
@@ -258,13 +196,37 @@ def render_layout():
     players_names = sorted(players_df['Name'].tolist())
     
     with col_left:
-        user_text = st.text_input("Describe your ideal team")
-        if st.button("Parse with AI") and user_text:
-            for name in st.session_state.get("last_llm_locked", set()):
-                st.session_state.locked_players.pop(name, None)
-            st.session_state.last_llm_locked = set()
+        # 1. Add a secure input field in the sidebar for the user's API key
+        st.sidebar.title("Configuration")
+        user_api_key = st.sidebar.text_input(
+            "Anthropic API Key (Optional)", 
+            type="password", 
+            help="Enter your key to use AI constraints, or leave blank to use manual controls."
+        )
 
-            st.session_state.parsed_constraints = parse_nl_input(user_text)
+        # 2. Determine which key to use (User input takes priority, then environment variable)
+        api_key_to_use = user_api_key if user_api_key else os.getenv("ANTHROPIC_API_KEY")
+
+        # 3. Initialize the client safely
+        if api_key_to_use:
+            client = anthropic.Anthropic(api_key=api_key_to_use)
+        else:
+            client = None
+
+        user_text = st.text_input("Describe your ideal team")
+
+        if st.button("Parse with AI") and user_text:
+            if client is None:
+                st.sidebar.error(" Please use your Anthropic API key above to use AI parsing")
+            else:
+                for name in st.session_state.get("last_llm_locked", set()):
+                    st.session_state.locked_players.pop(name, None)
+                st.session_state.last_llm_locked = set()
+            try:
+                st.session_state.parsed_constraints = parse_nl_input(user_text,client)
+                st.success("Constrains parsed successfully")
+            except Exception as e:
+                st.error(f"Error parsing input: {e}")
 
         parsed = st.session_state.get("parsed_constraints", {})
 
