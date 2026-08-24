@@ -53,7 +53,7 @@ class SquadMILPSolver:
                             
                                                 },
                             ((4,3,3), 'defend'): {
-                            'CAM': (0, 1),  # (min, max)
+                            'CAM': (0, 0),  # (min, max)
                             'CM':  (1, 2),
                             'CDM': (1, 2),
                             'LW':  (0, 1),
