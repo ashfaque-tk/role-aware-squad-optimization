@@ -3,8 +3,6 @@ import os
 
 from dotenv import load_dotenv
 
-load_dotenv()
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_KEY_KEY"))  # reads ANTHROPIC_API_KEY from env
 
 tools = [{
     "name": "extract_squad_constraints",
@@ -71,3 +69,12 @@ def parse_nl_input(user_text,client):
 message = 'team with Neymar with min age of 32'
 
 # print(parse_nl_input(message))
+
+if __name__ == '__main__':
+    text = 'I need a team with messi as attacking mid and rakitic as defensive mid'
+
+    load_dotenv()
+    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_KEY_KEY"))  # reads ANTHROPIC_API_KEY from env
+
+    out = parse_nl_input(text,client)
+    print(out)

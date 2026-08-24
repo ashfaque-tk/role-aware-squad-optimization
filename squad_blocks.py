@@ -72,7 +72,7 @@ def find_duplicate_roles(locked_players: dict) -> list:
 
 
 # ---------------------------------------------------------------------------
-# LLM BLOCK
+# CONSTRAINTS FROM LLM
 # ---------------------------------------------------------------------------
 
 def render_llm_block(players_df):
@@ -113,6 +113,7 @@ def render_llm_block(players_df):
     if fixed_players:
         st.caption(f"Detected from text: {', '.join(p['name'] for p in fixed_players)}")
         for i, p in enumerate(fixed_players):
+            # name_,role_ = p.get('name'), p.get('role')
             _resolve_llm_player(p.get("name", ""), p.get("role"), i, players_df)
 
     return parsed
@@ -155,7 +156,7 @@ def _resolve_llm_player(candidate_name, candidate_role, idx, players_df):
 
     if matched_name in dismissed:
         return
-
+    
     row = safe_get_player(players_df, matched_name)
     if row is None:
         st.warning(f"Player data missing for {matched_name}.")
@@ -165,11 +166,14 @@ def _resolve_llm_player(candidate_name, candidate_role, idx, players_df):
         st.warning(f"Maximum players already chosen. Skipped **{matched_name}**.")
         return
 
+    if not candidate_role in row['PossiblePositions']:
+        st.warning(f"Player cannot play the specified role. Defaulted to None. Choose from the dropdown list")
+        candidate_role = None
     lock_player(matched_name, candidate_role, row, source="llm")
 
 
 # ---------------------------------------------------------------------------
-# MANUAL BLOCK
+# MANUAL CONSTRAINTS SELECTION
 # ---------------------------------------------------------------------------
 
 def render_manual_block(players_df):
