@@ -54,8 +54,8 @@ def render_team_settings(parsed: dict):
     formation_options = ["4-3-3"]
     formation = st.selectbox("Formation", formation_options)
 
-    style_options = ["attack", "defend", "balanced"]
-    style_index = style_options.index(parsed["style"]) if parsed.get("style") in style_options else 2
+    style_options = ["attack", "defend"]
+    style_index = style_options.index(parsed["style"]) if parsed.get("style") in style_options else 0
     style = st.radio("Playing Style", style_options, index=style_index)
 
     min_age = parsed.get("min_age") or 16
@@ -161,9 +161,10 @@ def display_solution(solution, formation):
     """Pure display — no solving here, so it's cheap to redraw on every rerun."""
     playing_team = solution["selected_players"]
     st.success("✅ Your Dream Team is Ready!")
-    col1, col2 = st.columns(2)
+    col1, col2,col3= st.columns(3)
     col1.metric("Total Cost", f"€{solution['total_budget']/1_000_000:.1f}M")
     col2.metric("Average Age", f"{solution['average age']:.1f}")
+    col3.metric("Average Team Score",f"{pd.DataFrame(playing_team)['Rolescore'].mean():.1f}")
 
     try:
         fig = plot_team(playing_team, formation=formation[:3])

@@ -1,5 +1,6 @@
 import pulp as pl 
 from typing import Dict, List,Tuple
+from src.formations import SLOT_CONFIGS, FORMATION_STYLES, MUTUALLY_EXCLUSIVE_GROUPS
 import sys
 from pathlib import Path
 # import pandas as pd
@@ -33,60 +34,7 @@ class SquadMILPSolver:
         self.locked_players = locked_players
 
         print('locked players ', self.locked_players)
-
-
-        # self.playting_styles = {''}
-    def _get_formation_constraints(self,formation,style):
-        formation_styles=  {( (4,3,3), 'attack'): {
-                            'CAM': (1, 2),  # (min, max)
-                            'CM':  (0, 2),
-                            'CDM': (0, 1),
-                            'LW':  (0, 1),
-                            'RW':  (0, 1),
-                            'ST':  (0, 1),
-                            'CF': (0,1),
-                            'CB':  (2, 2),
-                            'LB':  (1, 1),
-                            'RB':  (1, 1),
-                            'LM': (0,1),
-                            'RM': (0,1)
-                            
-                                                },
-                            ((4,3,3), 'defend'): {
-                            'CAM': (0, 0),  # (min, max)
-                            'CM':  (1, 2),
-                            'CDM': (1, 2),
-                            'LW':  (0, 1),
-                            'RW':  (0, 1),
-                            'ST':  (1, 1),
-                            'CF': (0,1),
-                            'CB':  (2, 2),
-                            'LB':  (1, 1),
-                            'RB':  (1, 1),
-                            'LM' : (0,1),
-                            'RM' :(0,1)  
-                            },
-                            ((4,3,3), 'balanced'): {
-                            'CAM': (0, 1),  # (min, max)
-                            'CM':  (1, 2),
-                            'CDM': (1, 1),
-                            'LW':  (0, 1),
-                            'RW':  (0, 1),
-                            'ST':  (1, 1),
-                            'CF': (0,1),
-                            'CB':  (2, 2),
-                            'LB':  (1, 1),
-                            'RB':  (1, 1),
-                            'LM' : (0,1),
-                            'RM' :(0,1)  
-                            }
-
-                            }      
-
-        style_weights = {'attack':[1,0.8,0.4],'defend':[0.6,0.7,1],'balanced':[0.5,0.5,0.5]}         
-
-        return formation_styles[(formation,style)],style_weights[style]                             
-        
+              
     def build_variables(self):
         if not self.role_aware:
             # x[player] ∈ {0,1}
@@ -105,11 +53,7 @@ class SquadMILPSolver:
             self.model += pl.lpSum(p["rating_per_roles"][r] * self.x[(p["Name"], r)]
                 for p in self.players
                 for r in p["PossiblePositions"])
-            # giving a  weight depending on the style of play
-            # formation= self.formation[:3]
-            # _,[w_attack,w_mid,w_def] = self._get_formation_constraints(formation,style=self.style)
-
-            # self.model+= pl.lpSum()
+            
 
     def build_constraints(self):
         DF, MF, FW ,GK = self.formation
@@ -149,12 +93,26 @@ class SquadMILPSolver:
             for p in self.players:
                 self.model += pl.lpSum(self.x[(p["Name"], r)] for r in p["PossiblePositions"]) <= 1
                 # self.model+= pl.lpSum(self.x[(p['Name'],r )] for r in p['PossiblePostions'])
+            
             formation= self.formation[:3]
-            formation_constraints,_ = self._get_formation_constraints(formation,self.style)
 
+            formation_constraints = FORMATION_STYLES[(formation,self.style)]
+            
             for position,limits in formation_constraints.items():
+
                 self.model+=pl.lpSum(self.x[(p['Name'],position)] for p in self.players if position in p['PossiblePositions'])>=limits[0]
                 self.model+=pl.lpSum(self.x[(p['Name'],position)] for p in self.players if position in p['PossiblePositions'])<=limits[1]
+
+            for role_a, role_b in MUTUALLY_EXCLUSIVE_GROUPS:
+                if role_a not in formation_constraints and role_b not in formation_constraints:
+                    continue
+                combined = pl.lpSum(
+                    self.x[(p['Name'], r)]
+                    for p in self.players
+                    for r in (role_a, role_b)
+                    if r in p['PossiblePositions']
+                )
+                self.model += combined <= 1
             
             #formation
             for gb_role,required in zip(['DF','MF','FW' , 'GK'], self.formation):
@@ -163,6 +121,7 @@ class SquadMILPSolver:
                     for r in p['PossiblePositions']:
                         if p['GlobalPos'][r]==gb_role:
                             role_sum.append(self.x[(p['Name'],r)])
+
                 self.model += (pl.lpSum(role_sum)==required)
             # budget 
             self.model+=pl.lpSum(self.x[(p['Name'],r)]*p['WageEUR'] for p in self.players for r in p['PossiblePositions'])<=self.budget

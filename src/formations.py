@@ -1,42 +1,46 @@
-# formation.py
+""" different formation and playing choices 
+"""
+FORMATION_STYLES =  {( (4,3,3), 'attack'): {
+                            'CAM': (1, 2),  # (min, max)
+                            'CM':  (0, 2),
+                            'CDM': (0, 1),
+                            'LW':  (0, 1),
+                            'RW':  (0, 1),
+                            'ST':  (0, 1),
+                            'CF': (0,1),
+                            'CB':  (2, 2),
+                            'LB':  (0, 1),'LWB':(0,1),
+                            'RB':  (0, 1),'RWB' :(0,1),
+                            'LM': (0,1),
+                            'RM': (0,1) 
+                            },
+                    ((4,3,3), 'defend'): {
+                            'CAM': (0, 0),  # (min, max)
+                            'CM':  (1, 2),
+                            'CDM': (1, 2),
+                            'LW':  (0, 1),'LWB':(0,1),
+                            'RW':  (0, 1),'RWB':(0,1),
+                            'ST':  (1, 1),
+                            'CF': (0,1),
+                            'CB':  (2, 2),
+                            'LB':  (0, 1),
+                            'RB':  (0, 1),
+                            'LM' : (0,1),
+                            'RM' :(0,1)  
+                            }
+                            }      
+SLOT_CONFIGS = {(4, 3, 3): {
+                            "GK":       ["GK"],
+                            "LB_SLOT":  ["LB", "LWB"],
+                            "CB_SLOT":  ["CB"],
+                            "RB_SLOT":  ["RB", "RWB"],
+                            "LCM_SLOT": ["CM", "LM", "CDM", "CAM"],
+                            "CCM_SLOT": ["CDM", "CM", "CAM"],
+                            "RCM_SLOT": ["CM", "RM", "CDM", "CAM"],
+                            "LW_SLOT":  ["LW", "LM", "LF", "ST"],
+                            "ST_SLOT":  ["ST", "CF"],
+                            "RW_SLOT":  ["RW", "RM", "RF", "ST"],
+                        }
+                    }
 
-from typing import Dict, Tuple
-
-# role_family -> (min, max)
-FormationSpec = Dict[str, Tuple[int, int]]
-
-GLOBAL_ROLE_MAPING: Dict[str,str]= { 'DF':['LB_LWB','CB','RB_RWB'],'MF':['LM','CM_CAM','CDM','RM'],'FW':['LW','ST_CF','RW']}
-
-MICRO_TO_SUBROLE = {
-    'LB': 'LB_LWB', 'LWB': 'LB_LWB',
-    'RB': 'RB_RWB', 'RWB': 'RB_RWB',
-    'CB': 'CB',
-
-    'CDM': 'CDM',
-    'CM': 'CM_CAM', 'CAM': 'CM_CAM',
-    'LM': 'LM', 'RM': 'RM',
-
-    'LW': 'LW', 'RW': 'RW',
-    'CF': 'ST_CF', 'ST': 'ST_CF',
-}
-
-
-FORMATIONS_SPEC: Dict[Tuple[int, int, int], FormationSpec] = {
-
-    (4, 3, 3): {
-                'CM_CAM': (1, 2),  # (min, max)
-                'CDM': (1, 2),
-                'LW':  (1, 1),
-                'RW':  (1, 1),
-                'ST_CF':  (1, 1),
-                # 'CF': (0,1),
-                'CB':  (2, 2),
-                'LB_LWB':  (1, 1),
-                # 'LWB': (0,1),
-                'RB_RWB': (1,1),
-                # 'RB':  (1, 1),
-                'LM': (0,1),
-                'RM': (0,1)
-    }
-
-}
+MUTUALLY_EXCLUSIVE_GROUPS = [ ('LB','LWB'),('RB','RWB')]

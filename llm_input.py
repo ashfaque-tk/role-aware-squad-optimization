@@ -13,7 +13,7 @@ tools = [{
         "type": "object",
         "properties": {
             "budget": {"type": ["number", "null"], "description": "Budget in euros, e.g. 500000. Null if not stated."},
-            "style": {"type": ["string", "null"], "enum": ["attack", "defend", "balanced", None]},
+            "style": {"type": ["string", "null"], "enum": ["attack", "defend", None]},
             "min_age": {"type": ["number", "null"],
                     "description": "Minimum average age of the squad."},
 

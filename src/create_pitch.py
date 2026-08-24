@@ -3,13 +3,14 @@ import mplsoccer
 import matplotlib.pyplot as plt
 
 FORMATIONS_DICT = {
-    (4,3,3): [
-        'GK',                              # Goalkeeper
-        'LB|LWB', 'RCB|CB', 'LCB|CB','RB|RWB',  # Defenders (right to left)
-         'LM|CAM|CM','CDM|CM', 'RM|CAM|CM'   ,   # Midfielders
-         'LW|LF|ST','CF|ST' ,'RW|RF|ST'          # Attackers
+    (4, 3, 3): [
+        'GK',
+        'LB|LWB|CB', 'CB|LCB', 'CB|RCB', 'RB|RWB|CB',
+        'LM|CAM|CM|CDM', 'CDM|CM|CAM|LM|RM', 'RM|CAM|CM|CDM',
+        'LW|LM|ST|CF|LF', 'ST|CF|RF|LF|CAM', 'RW|RM|ST|CF|RF'
     ]
 }
+
 
 xaxis_locations = {
     1: [40], 
@@ -52,6 +53,46 @@ def get_formation_coords(formation):
         coords.append((x, y_positions["ATT"]))
     
     return coords
+
+# def assign_players_to_slots(players: list[dict], pitch_slots: list[str]) -> dict | None:
+#     """
+#     Guarantees 100% optimal bipartite matching using clean backtracking.
+#     Does not mutate lists during iteration.
+#     """
+#     assignment = {}
+
+#     def backtrack(slot_idx: int, used_indices: set) -> bool:
+#         if slot_idx == len(pitch_slots):
+#             return True  # Success! All 11 slots filled.
+
+#         allowed_roles = {r.strip() for r in pitch_slots[slot_idx].split('|')}
+
+#         for idx, player in enumerate(players):
+#             if idx in used_indices:
+#                 continue  # Player already assigned to an earlier slot
+
+#             # Check primary role or list of possible positions
+#             player_roles = player.get('PossiblePositions', [player.get('role', '')])
+#             if isinstance(player_roles, str):
+#                 player_roles = [player_roles]
+
+#             # If player fits this slot
+#             if any(role in allowed_roles for role in player_roles):
+#                 assignment[slot_idx] = player
+#                 used_indices.add(idx)
+
+#                 # Explore deeper down the tree
+#                 if backtrack(slot_idx + 1, used_indices):
+#                     return True
+
+#                 # BACKTRACK: undo selection and try next candidate
+#                 used_indices.remove(idx)
+#                 del assignment[slot_idx]
+
+#         return False
+
+#     success = backtrack(0, set())
+#     return assignment if success else None
 
 def assign_players_to_slots(players:list[dict], formation:tuple[int,int,int]):
   
