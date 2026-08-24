@@ -166,7 +166,7 @@ def _resolve_llm_player(candidate_name, candidate_role, idx, players_df):
         st.warning(f"Maximum players already chosen. Skipped **{matched_name}**.")
         return
 
-    if not candidate_role in row['PossiblePositions']:
+    if not candidate_role in row['PossiblePositions']+[None]:
         st.warning(f"Player cannot play the specified role. Defaulted to None. Choose from the dropdown list")
         candidate_role = None
     lock_player(matched_name, candidate_role, row, source="llm")
