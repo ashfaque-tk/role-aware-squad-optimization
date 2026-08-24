@@ -3,6 +3,8 @@ An advanced football squad optimization framework that selects an optimal lineup
 
 This project demonstrates how modern optimization techniques can be combined with statistical feature extraction to model **playing styles**, **positional flexibility**, and **formation constraints** in football squad selection.
 
+The live app lives here: https://squad-optimizer.streamlit.app/
+
 
 ##  Problem Statement
 
